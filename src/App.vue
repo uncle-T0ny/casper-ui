@@ -1,8 +1,6 @@
 <template>
   <header>
     <div class="wrapper">
-      <div>Hello world</div>
-
       <button
           class="LoginBtn"
           @click="signerConnect"
@@ -15,31 +13,33 @@
   <main>
 
     <div>
-      user public key:
-      <div v-text="pubKey"></div>
-      <br>
+      <div class="bg-success Box">
+        user public key:
+        <div v-text="pubKey"></div>
+      </div>
 
+
+      <div class="bg-primary Box">
       casper balance:
-      <div v-text="casperBalance"></div>
-      <br>
+      <div v-text="casperBalance"/>
+      </div>
 
-
-      contract hash:
-      <input v-model="contractHash">
-      <br>
-      <button
-          @click="getErc20Balance"
-          type="button"
-      >get erc20 balance
-      </button>
+      <p class="bg-success Box">
+        <label for="inputTokenHash">ERC20 Token Hash:</label>
+        <input type="text" id="inputTokenHash" class="form-control" aria-describedby="helpBlock" placeholder="ERC20 token hash" v-model="erc20TokenHash">
+      </p>
 
       <Sender/>
 
-      <AllowanceGetter/>
+      <AllowanceGetter :erc20TokenHash="erc20TokenHash"/>
 
-      erc20 balance:
-      <div v-text="erc20Balance"></div>
-      <br>
+      <ERC20BalanceGetter :erc20TokenHash="erc20TokenHash"/>
+
+      <Approve :erc20TokenHash="erc20TokenHash"/>
+
+      <TransferERC20ToContract :erc20TokenHash="erc20TokenHash"/>
+
+      <TransferERC20From :erc20TokenHash="erc20TokenHash" />
     </div>
   </main>
 </template>
@@ -49,10 +49,13 @@
 import {defineComponent, ref, onMounted} from 'vue'
 
 import {useSignerStore} from './stores/signer';
-import {CasperServiceByJsonRPC, CLPublicKey} from "casper-js-sdk";
 import {CasperAPI} from "@/casper/api";
 import Sender from "./components/SenderToContract.vue";
 import AllowanceGetter from "./components/AllowanceGetter.vue";
+import ERC20BalanceGetter from "./components/ERC20BalanceGetter.vue";
+import TransferERC20ToContract from "./components/TransferERC20ToContract.vue";
+import Approve from "./components/Approve.vue";
+import TransferERC20From from "./components/TransferERC20From.vue";
 import {NODE_ADDRESS} from "@/constants";
 
 declare global {
@@ -69,15 +72,19 @@ const App = defineComponent({
   name: 'App',
   components: {
     Sender,
-    AllowanceGetter
+    AllowanceGetter,
+    ERC20BalanceGetter,
+    Approve,
+    TransferERC20ToContract,
+    TransferERC20From,
   },
   setup() {
     const signer = useSignerStore();
 
     const pubKey = ref('');
     const casperBalance = ref('');
-    const erc20Balance = ref('');
     const contractHash = ref('');
+    const erc20TokenHash = ref('9b287f35b7c11659046cf575b13055dde7f9a309cae5fe1ce3ca985d87f029b0');
 
     const activeKey = ref('0');
 
@@ -110,11 +117,6 @@ const App = defineComponent({
       window.casperlabsHelper.requestConnection();
     }
 
-    async function getErc20Balance() {
-      const publicKey = await window.casperlabsHelper.getActivePublicKey();
-      erc20Balance.value = await api.erc20BalanceOf(publicKey, contractHash.value);
-    }
-
     onMounted(async () => {
       const isConnected = await window.casperlabsHelper.isConnected()
 
@@ -136,9 +138,8 @@ const App = defineComponent({
       signerConnect,
       signer,
       casperBalance,
-      erc20Balance,
       contractHash,
-      getErc20Balance,
+      erc20TokenHash,
     }
   }
 })
@@ -152,11 +153,20 @@ export default App;
    right: 20px;
    top: 20px;
    font-size: 20px;
+   width: 200px;
+   height: 80px;
    color: #55151f;
  }
 
  .Box {
-   border: 1px solid;
-   padding: 50px;
+   padding: 10px;
+   border-bottom: 1px solid slategray;
+ }
+
+ input {
+   padding: 5px;
+   border-radius: 5px;
+   width: 30%;
+   margin: 2px;
  }
 </style>
