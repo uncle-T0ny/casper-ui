@@ -300,7 +300,8 @@ export class CasperAPI {
         console.log('deployHash', deployHash);
     }
 
-    async transferERC20From(activeKey: string, amount: string, ownerHash: string, tokenHash: string) {
+    async transferERC20From(activeKey: string, amount: string, ownerPubKey: string, tokenHash: string) {
+
         const deployParams = new DeployUtil.DeployParams(
             CLPublicKey.fromHex(activeKey),
             this.network
@@ -308,11 +309,11 @@ export class CasperAPI {
 
         const session = DeployUtil.ExecutableDeployItem.newStoredContractByHash(
             Uint8Array.from(Buffer.from(tokenHash, "hex")),
-            'testing_erc20_transfer',
+            'transfer_from',
             RuntimeArgs.fromMap({
-                owner: this.createRecipientAddress(new CLByteArray(Uint8Array.from(Buffer.from(ownerHash, "hex")))),
-                recipient: this.createRecipientAddress(new CLByteArray(Uint8Array.from(Buffer.from(activeKey, "hex")))),
-                value: new CLU256(amount),
+                owner:  this.createRecipientAddress(CLPublicKey.fromHex(ownerPubKey)),
+                recipient: this.createRecipientAddress(CLPublicKey.fromHex(activeKey)),
+                amount: new CLU256(amount),
             })
         );
         const payment = DeployUtil.standardPayment('3000000000');
