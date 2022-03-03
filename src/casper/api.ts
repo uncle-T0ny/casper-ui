@@ -135,8 +135,43 @@ export class CasperAPI {
         return blockState;
     };
 
-    async erc20Allowance(erc20ContractHash: string, owner: string, spender: string): Promise<string> {
+    getHashFromPubKey(pubKey: string): string {
+        const accountHash = CLPublicKey.fromHex(pubKey).toAccountHashStr();
+        console.log(`
+            pub key: ${pubKey},
+            hex: ${accountHash}
+        `)
+        return accountHash;
+    }
 
+    async erc20AllowanceByPubKeys(erc20ContractHash: string, owner: string, spender: string): Promise<string> {
+        const finalBytes = concat(
+            [
+                CLValueParsers.toBytes(this.createRecipientAddress(CLPublicKey.fromHex(owner))).unwrap(),
+                CLValueParsers.toBytes(this.createRecipientAddress(CLPublicKey.fromHex(spender))).unwrap()
+            ]
+        );
+        const blaked = blake.blake2b(finalBytes, undefined, 32);
+        const encodedBytes = Buffer.from(blaked).toString("hex");
+
+        const {namedKeys} = await this.getContractDataByHash(erc20ContractHash);
+
+        try {
+            const result = await utils.contractDictionaryGetter(
+                this.nodeAddress,
+                encodedBytes,
+                // @ts-ignore
+                namedKeys.allowances
+            );
+
+            return result.toString();
+        } catch (err) {
+            console.log('failed to get allowance:', err);
+            return '0';
+        }
+    }
+
+    async erc20Allowance(erc20ContractHash: string, owner: string, spender: string): Promise<string> {
         console.log(`parse owner ${owner}`);
         const keyOwner = this.createRecipientAddress(CLPublicKey.fromHex(owner));
         console.log(`parse spender ${spender}`);
@@ -159,8 +194,8 @@ export class CasperAPI {
         } catch (err) {
             return '0';
         }
-
     }
+
 
     async getContractDataByHash(erc20ContractHash: string): Promise<{ namedKeys: object, contractPackageHash: string }> {
         const stateRootHash = await this.getStateRootHash(this.nodeAddress);
@@ -318,6 +353,32 @@ export class CasperAPI {
         );
         const payment = DeployUtil.standardPayment('3000000000');
         const deploy = DeployUtil.makeDeploy(deployParams, session, payment);
+
+        const to = activeKey;
+        const signedDeploy = await CasperSigner.sign(deploy, {activeKey, to});
+        const casperService = new CasperServiceByJsonRPC(NODE_ADDRESS);
+        const {deploy_hash: deployHash} = await casperService.deploy(signedDeploy);
+
+        console.log('deployHash', deployHash);
+    }
+
+    async approveByPubKey(erc20ContractHash: string, activeKey: string, spender: string, approveAmount: string) {
+        const keySpender = this.createRecipientAddress(CLPublicKey.fromHex(spender));
+
+        const args = RuntimeArgs.fromMap({
+            spender: keySpender,
+            amount: CLValueBuilder.u256(approveAmount),
+        });
+
+        const deployParams = new DeployParameters(
+            activeKey,
+            'casper-test',
+            erc20ContractHash,
+            'approve',
+            args,
+            '300000000'
+        );
+        const deploy = deployParams.makeDeploy;
 
         const to = activeKey;
         const signedDeploy = await CasperSigner.sign(deploy, {activeKey, to});

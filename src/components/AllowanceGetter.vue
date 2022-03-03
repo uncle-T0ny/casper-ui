@@ -42,26 +42,28 @@ const AllowanceGetter = defineComponent({
   },
   name: 'AllowanceGetter',
   setup(props) {
-    const contractHash = ref('9b287f35b7c11659046cf575b13055dde7f9a309cae5fe1ce3ca985d87f029b0');
     const spenderHash = ref('');
     const ownerHash = ref('');
     const allowance = ref('0');
 
     async function getAllowance() {
+      if (!props.erc20TokenHash) {
+        return;
+      }
       console.log('erc20TokenHash', props.erc20TokenHash);
       console.log(`
       get allowance:
-      contractHash: ${contractHash.value}
+      contractHash: ${props.erc20TokenHash}
       spenderHash: ${spenderHash.value}
       `);
 
-      const allowanceVal = await api.erc20Allowance(contractHash.value, ownerHash.value, spenderHash.value);
+      // const allowanceVal = await api.erc20Allowance(props.erc20TokenHash, ownerHash.value, spenderHash.value);
+      const allowanceVal = await api.erc20AllowanceByPubKeys(props.erc20TokenHash, ownerHash.value, spenderHash.value);
       console.log('allowance:', allowanceVal);
       allowance.value = allowanceVal;
     }
 
     return {
-      contractHash,
       spenderHash,
       allowance,
       ownerHash,

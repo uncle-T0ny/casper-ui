@@ -48,7 +48,8 @@ const Approve = defineComponent({
       `);
       const activeKey = await window.casperlabsHelper.getActivePublicKey();
 
-      await api.approve(props.erc20TokenHash, activeKey, spenderHash.value, '115792089237316195423570985008687907853269984665640564039457584007913129639123');
+      // await api.approve(props.erc20TokenHash, activeKey, spenderHash.value, '115792089237316195423570985008687907853269984665640564039457584007913129639123');
+      await api.approveByPubKey(props.erc20TokenHash, activeKey, spenderHash.value, '115792089237316195423570985008687907853269984665640564039457584007913129639123');
     }
 
     return {

@@ -16,6 +16,7 @@
       <div class="bg-success Box">
         user public key:
         <div v-text="pubKey"></div>
+        <div v-text="accountHash"></div>
       </div>
 
 
@@ -40,6 +41,8 @@
       <TransferERC20ToContract :erc20TokenHash="erc20TokenHash"/>
 
       <TransferERC20From :erc20TokenHash="erc20TokenHash" />
+
+      <PubKeyToHash/>
     </div>
   </main>
 </template>
@@ -56,6 +59,7 @@ import ERC20BalanceGetter from "./components/ERC20BalanceGetter.vue";
 import TransferERC20ToContract from "./components/TransferERC20ToContract.vue";
 import Approve from "./components/Approve.vue";
 import TransferERC20From from "./components/TransferERC20From.vue";
+import PubKeyToHash from "./components/PubKeyToHash.vue";
 import {NODE_ADDRESS} from "@/constants";
 
 declare global {
@@ -77,14 +81,16 @@ const App = defineComponent({
     Approve,
     TransferERC20ToContract,
     TransferERC20From,
+    PubKeyToHash,
   },
   setup() {
     const signer = useSignerStore();
 
     const pubKey = ref('');
+    const accountHash = ref('');
     const casperBalance = ref('');
     const contractHash = ref('');
-    const erc20TokenHash = ref('9b287f35b7c11659046cf575b13055dde7f9a309cae5fe1ce3ca985d87f029b0');
+    const erc20TokenHash = ref('b837affb50969930789002c74af2d9dafe00368dccd7098401383df4387b6c87');
 
     const activeKey = ref('0');
 
@@ -127,6 +133,7 @@ const App = defineComponent({
         casperBalance.value = balance.toString();
 
         pubKey.value = publicKey;
+        accountHash.value = api.getHashFromPubKey(publicKey);
       } else {
         console.log('Signer not connected');
       }
@@ -135,6 +142,7 @@ const App = defineComponent({
 
     return {
       pubKey,
+      accountHash,
       signerConnect,
       signer,
       casperBalance,
