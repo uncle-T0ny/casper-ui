@@ -144,42 +144,27 @@ export class CasperAPI {
         return accountHash;
     }
 
-    async erc20AllowanceByPubKeys(erc20ContractHash: string, owner: string, spender: string): Promise<string> {
-        const finalBytes = concat(
-            [
-                CLValueParsers.toBytes(this.createRecipientAddress(CLPublicKey.fromHex(owner))).unwrap(),
-                CLValueParsers.toBytes(this.createRecipientAddress(CLPublicKey.fromHex(spender))).unwrap()
-            ]
-        );
-        const blaked = blake.blake2b(finalBytes, undefined, 32);
-        const encodedBytes = Buffer.from(blaked).toString("hex");
-
-        const {namedKeys} = await this.getContractDataByHash(erc20ContractHash);
-
-        try {
-            const result = await utils.contractDictionaryGetter(
-                this.nodeAddress,
-                encodedBytes,
-                // @ts-ignore
-                namedKeys.allowances
-            );
-
-            return result.toString();
-        } catch (err) {
-            console.log('failed to get allowance:', err);
-            return '0';
-        }
-    }
-
     async erc20Allowance(erc20ContractHash: string, owner: string, spender: string): Promise<string> {
         console.log(`parse owner ${owner}`);
         const keyOwner = this.createRecipientAddress(CLPublicKey.fromHex(owner));
         console.log(`parse spender ${spender}`);
-        const keySpender = this.createRecipientAddress(new CLByteArray(Uint8Array.from(Buffer.from(spender, "hex"))));
-        const finalBytes = concat([CLValueParsers.toBytes(keyOwner).unwrap(), CLValueParsers.toBytes(keySpender).unwrap()]);
+        let keySpender;
+        try {
+            // for public key
+            keySpender = this.createRecipientAddress(CLPublicKey.fromHex(spender));
+        } catch (err) {
+            // for contract hash
+            console.log('init spender by contract hash');
+            keySpender = this.createRecipientAddress(new CLByteArray(Uint8Array.from(Buffer.from(spender, "hex"))));
+        }
+        const finalBytes = concat([
+            CLValueParsers.toBytes(keyOwner).unwrap(),
+            CLValueParsers.toBytes(keySpender).unwrap()
+        ]);
         const blaked = blake.blake2b(finalBytes, undefined, 32);
         const encodedBytes = Buffer.from(blaked).toString("hex");
 
+        console.log('encoded bytes', encodedBytes);
         const {namedKeys} = await this.getContractDataByHash(erc20ContractHash);
 
         try {
@@ -320,7 +305,7 @@ export class CasperAPI {
             'testing_erc20_transfer',
             RuntimeArgs.fromMap({
                 token: CLValueBuilder.key(new CLByteArray(Uint8Array.from(Buffer.from(tokenHash, "hex")))),
-                // token: this.createRecipientAddress(new CLByteArray(Uint8Array.from(Buffer.from(tokenHash, "hex")))),
+                contract_hash: this.createRecipientAddress(new CLByteArray(Uint8Array.from(Buffer.from('f6df418d9fd928c0ea30bf996236dbe86475cbb1d2a1772b9a326e6fa94a0683', "hex")))),
                 value: new CLU256(amount),
             })
         );
@@ -389,7 +374,15 @@ export class CasperAPI {
     }
 
     async approve(erc20ContractHash: string, activeKey: string, spender: string, approveAmount: string) {
-        const keySpender = this.createRecipientAddress(new CLByteArray(Uint8Array.from(Buffer.from(spender, "hex"))));
+        let keySpender;
+        try {
+            // for public key
+            keySpender = this.createRecipientAddress(CLPublicKey.fromHex(spender));
+        } catch (err) {
+            // for contract hash
+            console.log('init spender by contract hash');
+            keySpender = this.createRecipientAddress(new CLByteArray(Uint8Array.from(Buffer.from(spender, "hex"))));
+        }
 
         const args = RuntimeArgs.fromMap({
             spender: keySpender,

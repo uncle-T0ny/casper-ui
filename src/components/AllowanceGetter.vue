@@ -57,8 +57,7 @@ const AllowanceGetter = defineComponent({
       spenderHash: ${spenderHash.value}
       `);
 
-      // const allowanceVal = await api.erc20Allowance(props.erc20TokenHash, ownerHash.value, spenderHash.value);
-      const allowanceVal = await api.erc20AllowanceByPubKeys(props.erc20TokenHash, ownerHash.value, spenderHash.value);
+      const allowanceVal = await api.erc20Allowance(props.erc20TokenHash, ownerHash.value, spenderHash.value);
       console.log('allowance:', allowanceVal);
       allowance.value = allowanceVal;
     }

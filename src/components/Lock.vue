@@ -1,63 +1,70 @@
 <template>
   <div class="Box">
-    <h4>Transfer ERC20: </h4>
+    <h4>Lock CSPR: </h4>
 
     <div class="row">
       <div class="col-md-6">
         <label for="inputContractHash">Contract hash:</label>
         <input type="text" id="inputContractHash" class="form-control" aria-describedby="helpBlock" placeholder="spender" v-model="contractHash">
       </div>
+       <div class="col-md-4">
+        <label for="inputAmount">amount:</label>
+        <input type="text" id="inputAmount" class="form-control" aria-describedby="helpBlock" placeholder="amount"
+               v-model="amount">
+      </div>
     </div>
 
     <br>
     <button
         class="btn btn-default"
-        @click="transfer"
+        @click="lock"
         type="button"
     >
-      transfer
+      Lock CSPR
     </button>
     <br>
   </div>
 </template>
 
+
 <script lang="ts">
 import {defineComponent, ref} from "vue";
-import {CasperAPI} from "@/casper/api";
 import {NODE_ADDRESS} from "@/constants";
+import { BridgeAPI } from "../casper/bridge_api";
 
-const api = new CasperAPI(NODE_ADDRESS);
+const api = new BridgeAPI(NODE_ADDRESS);
 
-const TransferERC20ToContract = defineComponent({
+const Lock = defineComponent({
   props: {
     erc20TokenHash: String,
   },
-  name: 'TransferERC20ToContract',
+  name: 'Lock',
   setup(props) {
     const contractHash = ref('');
-    const allowance = ref('0');
+    const amount = ref('0');
 
-    async function transfer() {
+    async function lock() {
       if (!props.erc20TokenHash) {
         return;
       }
+
       console.log(`
-      transfer:
+      lock:
       contractHash: ${contractHash.value}
       tokenHash: ${props.erc20TokenHash}
       `);
       const activeKey = await window.casperlabsHelper.getActivePublicKey();
 
-      await api.transferERC201(activeKey, '10', contractHash.value, props.erc20TokenHash);
+      await api.lockBase(activeKey, amount.value, contractHash.value, props.erc20TokenHash);
     }
 
     return {
       contractHash,
-      allowance,
-      transfer,
+      amount,
+      lock,
     }
   }
 })
 
-export default TransferERC20ToContract;
+export default Lock;
 </script>

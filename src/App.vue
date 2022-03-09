@@ -30,6 +30,8 @@
         <input type="text" id="inputTokenHash" class="form-control" aria-describedby="helpBlock" placeholder="ERC20 token hash" v-model="erc20TokenHash">
       </p>
 
+      <Lock :erc20TokenHash="erc20TokenHash" />
+
       <Sender/>
 
       <AllowanceGetter :erc20TokenHash="erc20TokenHash"/>
@@ -59,6 +61,7 @@ import ERC20BalanceGetter from "./components/ERC20BalanceGetter.vue";
 import TransferERC20ToContract from "./components/TransferERC20ToContract.vue";
 import Approve from "./components/Approve.vue";
 import TransferERC20From from "./components/TransferERC20From.vue";
+import Lock from "./components/Lock.vue";
 import PubKeyToHash from "./components/PubKeyToHash.vue";
 import {NODE_ADDRESS} from "@/constants";
 
@@ -82,6 +85,7 @@ const App = defineComponent({
     TransferERC20ToContract,
     TransferERC20From,
     PubKeyToHash,
+    Lock,
   },
   setup() {
     const signer = useSignerStore();
@@ -90,7 +94,7 @@ const App = defineComponent({
     const accountHash = ref('');
     const casperBalance = ref('');
     const contractHash = ref('');
-    const erc20TokenHash = ref('b837affb50969930789002c74af2d9dafe00368dccd7098401383df4387b6c87');
+    const erc20TokenHash = ref('e8915cb52ff7a684e0a595d2c2804359e7362aecf0b176358d7cfbf3abb274a9');
 
     const activeKey = ref('0');
 
