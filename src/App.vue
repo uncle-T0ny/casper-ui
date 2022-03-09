@@ -1,8 +1,6 @@
 <template>
   <header>
     <div class="wrapper">
-      <div>Hello world</div>
-
       <button
           class="LoginBtn"
           @click="signerConnect"
@@ -15,31 +13,38 @@
   <main>
 
     <div>
-      user public key:
-      <div v-text="pubKey"></div>
-      <br>
+      <div class="bg-success Box">
+        user public key:
+        <div v-text="pubKey"></div>
+        <div v-text="accountHash"></div>
+      </div>
 
+
+      <div class="bg-primary Box">
       casper balance:
-      <div v-text="casperBalance"></div>
-      <br>
+      <div v-text="casperBalance"/>
+      </div>
 
+      <p class="bg-success Box">
+        <label for="inputTokenHash">ERC20 Token Hash:</label>
+        <input type="text" id="inputTokenHash" class="form-control" aria-describedby="helpBlock" placeholder="ERC20 token hash" v-model="erc20TokenHash">
+      </p>
 
-      contract hash:
-      <input v-model="contractHash">
-      <br>
-      <button
-          @click="getErc20Balance"
-          type="button"
-      >get erc20 balance
-      </button>
+      <Lock :erc20TokenHash="erc20TokenHash" />
 
       <Sender/>
 
-      <AllowanceGetter/>
+      <AllowanceGetter :erc20TokenHash="erc20TokenHash"/>
 
-      erc20 balance:
-      <div v-text="erc20Balance"></div>
-      <br>
+      <ERC20BalanceGetter :erc20TokenHash="erc20TokenHash"/>
+
+      <Approve :erc20TokenHash="erc20TokenHash"/>
+
+      <TransferERC20ToContract :erc20TokenHash="erc20TokenHash"/>
+
+      <TransferERC20From :erc20TokenHash="erc20TokenHash" />
+
+      <PubKeyToHash/>
     </div>
   </main>
 </template>
@@ -49,10 +54,15 @@
 import {defineComponent, ref, onMounted} from 'vue'
 
 import {useSignerStore} from './stores/signer';
-import {CasperServiceByJsonRPC, CLPublicKey} from "casper-js-sdk";
 import {CasperAPI} from "@/casper/api";
 import Sender from "./components/SenderToContract.vue";
 import AllowanceGetter from "./components/AllowanceGetter.vue";
+import ERC20BalanceGetter from "./components/ERC20BalanceGetter.vue";
+import TransferERC20ToContract from "./components/TransferERC20ToContract.vue";
+import Approve from "./components/Approve.vue";
+import TransferERC20From from "./components/TransferERC20From.vue";
+import Lock from "./components/Lock.vue";
+import PubKeyToHash from "./components/PubKeyToHash.vue";
 import {NODE_ADDRESS} from "@/constants";
 
 declare global {
@@ -69,15 +79,22 @@ const App = defineComponent({
   name: 'App',
   components: {
     Sender,
-    AllowanceGetter
+    AllowanceGetter,
+    ERC20BalanceGetter,
+    Approve,
+    TransferERC20ToContract,
+    TransferERC20From,
+    PubKeyToHash,
+    Lock,
   },
   setup() {
     const signer = useSignerStore();
 
     const pubKey = ref('');
+    const accountHash = ref('');
     const casperBalance = ref('');
-    const erc20Balance = ref('');
     const contractHash = ref('');
+    const erc20TokenHash = ref('e8915cb52ff7a684e0a595d2c2804359e7362aecf0b176358d7cfbf3abb274a9');
 
     const activeKey = ref('0');
 
@@ -110,11 +127,6 @@ const App = defineComponent({
       window.casperlabsHelper.requestConnection();
     }
 
-    async function getErc20Balance() {
-      const publicKey = await window.casperlabsHelper.getActivePublicKey();
-      erc20Balance.value = await api.erc20BalanceOf(publicKey, contractHash.value);
-    }
-
     onMounted(async () => {
       const isConnected = await window.casperlabsHelper.isConnected()
 
@@ -125,6 +137,7 @@ const App = defineComponent({
         casperBalance.value = balance.toString();
 
         pubKey.value = publicKey;
+        accountHash.value = api.getHashFromPubKey(publicKey);
       } else {
         console.log('Signer not connected');
       }
@@ -133,12 +146,12 @@ const App = defineComponent({
 
     return {
       pubKey,
+      accountHash,
       signerConnect,
       signer,
       casperBalance,
-      erc20Balance,
       contractHash,
-      getErc20Balance,
+      erc20TokenHash,
     }
   }
 })
@@ -152,11 +165,20 @@ export default App;
    right: 20px;
    top: 20px;
    font-size: 20px;
+   width: 200px;
+   height: 80px;
    color: #55151f;
  }
 
  .Box {
-   border: 1px solid;
-   padding: 50px;
+   padding: 10px;
+   border-bottom: 1px solid slategray;
+ }
+
+ input {
+   padding: 5px;
+   border-radius: 5px;
+   width: 30%;
+   margin: 2px;
  }
 </style>
