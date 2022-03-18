@@ -94,7 +94,7 @@ const App = defineComponent({
     const accountHash = ref('');
     const casperBalance = ref('');
     const contractHash = ref('');
-    const erc20TokenHash = ref('e8915cb52ff7a684e0a595d2c2804359e7362aecf0b176358d7cfbf3abb274a9');
+    const erc20TokenHash = ref('5fb7ae38dde6be78c69c41ee2a854e5207fa0c511a7a18296a4c785b744fbb71');
 
     const activeKey = ref('0');
 
@@ -171,9 +171,17 @@ export default App;
  }
 
  .Box {
-   padding: 10px;
-   border-bottom: 1px solid slategray;
- }
+    padding: 10px;
+    border-bottom: 1px solid slategray;
+  }
+
+  .Box summary {
+    font-size: 20px;
+  }
+
+  .Box summary:hover {
+    cursor: pointer;
+  }
 
  input {
    padding: 5px;

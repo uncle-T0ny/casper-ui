@@ -1,1 +1,1 @@
-export const NODE_ADDRESS = 'http://195.201.174.222:7777/rpc';
+export const NODE_ADDRESS = "http://65.108.9.249:7777/rpc";

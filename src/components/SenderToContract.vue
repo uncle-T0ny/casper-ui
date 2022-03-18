@@ -1,6 +1,6 @@
 <template>
-  <div class="Box">
-    <h4>Send CSPR to contract</h4>
+  <details class="Box">
+    <summary>Send CSPR to contract</summary>
 
     <div class="row">
       <div class="col-md-6">
@@ -23,7 +23,7 @@
     >
       send CSPR
     </button>
-  </div>
+  </details>
 </template>
 
 <script lang="ts">

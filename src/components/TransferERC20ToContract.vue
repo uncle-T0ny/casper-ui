@@ -1,6 +1,6 @@
 <template>
-  <div class="Box">
-    <h4>Transfer ERC20: </h4>
+  <details class="Box">
+    <summary>Transfer ERC20: </summary>
 
     <div class="row">
       <div class="col-md-6">
@@ -18,7 +18,7 @@
       transfer
     </button>
     <br>
-  </div>
+  </details>
 </template>
 
 <script lang="ts">

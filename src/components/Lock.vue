@@ -1,6 +1,6 @@
 <template>
-  <div class="Box">
-    <h4>Lock CSPR: </h4>
+  <details class="Box">
+    <summary>Lock CSPR: </summary>
 
     <div class="row">
       <div class="col-md-6">
@@ -23,7 +23,7 @@
       Lock CSPR
     </button>
     <br>
-  </div>
+  </details>
 </template>
 
 

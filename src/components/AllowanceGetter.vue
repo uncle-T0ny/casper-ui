@@ -1,6 +1,6 @@
 <template>
-  <div class="Box">
-    <h4>Get allowance</h4>
+  <details class="Box">
+    <summary>Get allowance</summary>
 
     <div class="row">
       <div class="col-md-4">
@@ -26,7 +26,7 @@
     >
       get allowance
     </button>
-  </div>
+  </details>
 </template>
 
 <script lang="ts">
