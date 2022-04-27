@@ -1,6 +1,6 @@
 <template>
-  <div class="Box">
-    <h4>Get HASH</h4>
+  <details class="Box">
+    <summary>Get HASH</summary>
 
     <div class="row">
       <div class="col-md-4">
@@ -21,7 +21,7 @@
     >
       get HEX
     </button>
-  </div>
+  </details>
 </template>
 
 <script lang="ts">

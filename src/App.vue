@@ -188,9 +188,17 @@ export default App;
  }
 
  .Box {
-   padding: 10px;
-   border-bottom: 1px solid slategray;
- }
+    padding: 10px;
+    border-bottom: 1px solid slategray;
+  }
+
+  .Box summary {
+    font-size: 20px;
+  }
+
+  .Box summary:hover {
+    cursor: pointer;
+  }
 
  input {
    padding: 5px;

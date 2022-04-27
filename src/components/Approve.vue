@@ -1,6 +1,6 @@
 <template>
-  <div class="Box">
-    <h4>Approve ERC20:</h4>
+  <details class="Box">
+    <summary>Approve ERC20:</summary>
 
     <div class="row">
       <div class="col-md-6">
@@ -18,7 +18,7 @@
       approve
     </button>
     <br>
-  </div>
+  </details>
 </template>
 
 <script lang="ts">
