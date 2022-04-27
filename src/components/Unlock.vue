@@ -1,6 +1,6 @@
 <template>
   <div class="Box">
-    <h4>Lock: </h4>
+    <h4>Unlock: </h4>
 
     <div class="row">
        <div class="col-md-4">
@@ -16,30 +16,30 @@
       <div class="col-md-1">
         <button
             class="btn btn-default"
-            @click="lock('Base')"
+            @click="unlock('Base')"
             type="button"
         >
-          Lock BASE
+          Unlock BASE
         </button>
       </div>
 
       <div class="col-md-1">
         <button
             class="btn btn-default"
-            @click="lock('Native')"
+            @click="unlock('Native')"
             type="button"
         >
-          Lock NATIVE
+          Unlock NATIVE
         </button>
       </div>
 
       <div class="col-md-1">
         <button
             class="btn btn-default"
-            @click="lock('Wrapped')"
+            @click="unlock('Wrapped')"
             type="button"
         >
-          Lock WRAPPED
+          Unlock WRAPPED
         </button>
       </div>
     </div>
@@ -57,11 +57,11 @@ import {config} from "@/config";
 
 const api = new BridgeAPI(NODE_ADDRESS);
 
-const Lock = defineComponent({
+const Unlock = defineComponent({
   props: {
     erc20TokenHash: String,
   },
-  name: 'Lock',
+  name: 'Unlock',
   setup(props) {
     const amount = ref('0');
 
@@ -70,13 +70,13 @@ const Lock = defineComponent({
 
       switch (type) {
         case 'Base':
-          await api.lockBase(activeKey, amount.value, config.BRIDGE_HASH, config.WCSPR_HASH);
+          await api.unlockBase();
           break;
         case 'Native':
-          await api.lockNative(activeKey, amount.value, config.BRIDGE_HASH, config.ERC20_HASH);
+          await api.unlockNative();
           break;
         case 'Wrapped':
-          await api.lockWrapped(activeKey, amount.value, config.BRIDGE_HASH, config.ERC20_HASH);
+          await api.unlockWrapped();
           break;
       }
     }
@@ -88,5 +88,5 @@ const Lock = defineComponent({
   }
 })
 
-export default Lock;
+export default Unlock;
 </script>

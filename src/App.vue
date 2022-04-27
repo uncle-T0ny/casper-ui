@@ -19,6 +19,17 @@
         <div v-text="accountHash"></div>
       </div>
 
+      <div class="Box">
+        BRIDGE HASH:
+        <div v-text="config.BRIDGE_HASH"></div>
+
+        ERC20 HASH:
+        <div v-text="config.ERC20_HASH"></div>
+
+        WCSPR HASH:
+        <div v-text="config.WCSPR_HASH"></div>
+      </div>
+
 
       <div class="bg-primary Box">
       casper balance:
@@ -64,6 +75,10 @@ import TransferERC20From from "./components/TransferERC20From.vue";
 import Lock from "./components/Lock.vue";
 import PubKeyToHash from "./components/PubKeyToHash.vue";
 import {NODE_ADDRESS} from "@/constants";
+import {
+  config
+} from "./config";
+import {useBridgeStore} from "@/stores/bridge";
 
 declare global {
   interface Window {
@@ -89,12 +104,13 @@ const App = defineComponent({
   },
   setup() {
     const signer = useSignerStore();
+    console.log('bridge: ', config.BRIDGE_HASH);
 
     const pubKey = ref('');
     const accountHash = ref('');
     const casperBalance = ref('');
     const contractHash = ref('');
-    const erc20TokenHash = ref('e8915cb52ff7a684e0a595d2c2804359e7362aecf0b176358d7cfbf3abb274a9');
+    const erc20TokenHash = ref('df2800159ce5990fdbeb92099359ad361c44a4fd3b1f38a1a15c9d0f795c014e');
 
     const activeKey = ref('0');
 
@@ -145,6 +161,7 @@ const App = defineComponent({
 
 
     return {
+      config,
       pubKey,
       accountHash,
       signerConnect,

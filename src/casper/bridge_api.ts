@@ -72,6 +72,76 @@ export class BridgeAPI {
         console.log('deployHash', deployHash);
     }
 
+    async lockNative(activeKey: string, amount: string, receiverHash: string, tokenAddress: string) {
+        const {balanceUref} = await this.getAccountUref(activeKey);
+
+        console.log('balanceUref', balanceUref);
+
+        const args = RuntimeArgs.fromMap({
+            // caller_purse: CLURef.fromFormattedStr(balanceUref),
+            lock_id: new CLU128(this.generateLockId()),
+            amount: new CLU256(amount),
+            token_address: new CLString(tokenAddress),
+            recipient: new CLString("0x3f23E1554afe9e3c30DCB692A274d95307361326"),
+            destination: new CLString("ETH"),
+        });
+
+        const deployParams = new DeployParameters(
+          activeKey,
+          'casper-test',
+          receiverHash,
+          'lock',
+          args,
+          '1000000000'
+        );
+        const deploy = deployParams.makeDeploy;
+
+        const to = activeKey;
+        const signedDeploy = await CasperSigner.sign(deploy, {activeKey, to});
+        const casperService = new CasperServiceByJsonRPC(NODE_ADDRESS);
+        const {deploy_hash: deployHash} = await casperService.deploy(signedDeploy);
+
+        console.log('deployHash', deployHash);
+    }
+
+    async lockWrapped(activeKey: string, amount: string, receiverHash: string, tokenAddress: string) {
+        const {balanceUref} = await this.getAccountUref(activeKey);
+
+        console.log('balanceUref', balanceUref);
+
+        const args = RuntimeArgs.fromMap({
+            caller_purse: CLURef.fromFormattedStr(balanceUref),
+            lock_id: new CLU128(this.generateLockId()),
+            amount: new CLU256(amount),
+            token_address: new CLString(tokenAddress),
+            recipient: new CLString("0x3f23E1554afe9e3c30DCB692A274d95307361326"),
+            destination: new CLString("ETH"),
+        });
+
+        const deployParams = new DeployParameters(
+          activeKey,
+          'casper-test',
+          receiverHash,
+          'lock_base',
+          args,
+          '300000000'
+        );
+        const deploy = deployParams.makeDeploy;
+
+        const to = activeKey;
+        const signedDeploy = await CasperSigner.sign(deploy, {activeKey, to});
+        const casperService = new CasperServiceByJsonRPC(NODE_ADDRESS);
+        const {deploy_hash: deployHash} = await casperService.deploy(signedDeploy);
+
+        console.log('deployHash', deployHash);
+    }
+
+    async unlockBase() {
+    }
+    async unlockNative() {
+    }
+    async unlockWrapped() {
+    }
     async getAccountUref(publicKeyHex: string): Promise<{ balanceUref: string, stateRootHash: string }> {
         const casperService = new CasperServiceByJsonRPC(NODE_ADDRESS);
         const latestBlock = await casperService.getLatestBlockInfo();
