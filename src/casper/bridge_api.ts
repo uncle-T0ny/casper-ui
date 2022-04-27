@@ -21,10 +21,13 @@ import * as blake from "blakejs";
 
 import { utils } from "casper-js-client-helper";
 import { concat } from "@ethersproject/bytes";
-import { NODE_ADDRESS } from "@/constants";
+import { NODE_ADDRESS, PK } from "@/constants";
 import { DeployParameters } from "@/casper/DeployParameters";
 import { CasperSigner } from "@/casper/Signer";
 import BN from "bn.js";
+import type { UnlockArgsToSign } from "@/interfaces";
+import { signMessage } from "@/web3Helper";
+import { CasperAPI } from "./api";
 export type Bytes = ArrayLike<number>;
 export type BytesLike = Bytes | string;
 export declare type RecipientType = CLPublicKey | CLAccountHash | CLByteArray;
@@ -166,7 +169,53 @@ export class BridgeAPI {
 
   async unlockBase() {}
   async unlockNative() {}
-  async unlockWrapped() {}
+
+  async unlockWrapped(activeKey: string, amount: string, receiverHash: string) {
+    const unlockArgs: UnlockArgsToSign = {
+      lock_id: this.generateLockId(),
+      amount: amount,
+      recipient: activeKey,
+      lock_source: "CSPR",
+      token_source: "CAD",
+      token_source_address: "0xffa3a3eFc1229116c9F1DEC71B788e6F89338C7c",
+    };
+
+    const signature = new CLString(await signMessage(PK, unlockArgs));
+
+    let recipient = CasperAPI.createRecipientAddress(
+      CLPublicKey.fromHex(activeKey)
+    );
+
+    const args = RuntimeArgs.fromMap({
+      lock_id: new CLU128(unlockArgs.lock_id),
+      amount: new CLU256(unlockArgs.amount),
+      lock_source: new CLString(unlockArgs.lock_source),
+      token_source: new CLString(unlockArgs.token_source),
+      token_source_address: new CLString(unlockArgs.token_source_address),
+      recipient,
+      signature,
+    });
+
+    const deployParams = new DeployParameters(
+      activeKey,
+      "casper-test",
+      receiverHash,
+      "unlock",
+      args,
+      "300000000"
+    );
+    const deploy = deployParams.makeDeploy;
+
+    const to = activeKey;
+    const signedDeploy = await CasperSigner.sign(deploy, { activeKey, to });
+    const casperService = new CasperServiceByJsonRPC(NODE_ADDRESS);
+    const { deploy_hash: deployHash } = await casperService.deploy(
+      signedDeploy
+    );
+
+    console.log("deployHash", deployHash);
+  }
+
   async getAccountUref(
     publicKeyHex: string
   ): Promise<{ balanceUref: string; stateRootHash: string }> {

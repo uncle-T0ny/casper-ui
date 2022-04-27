@@ -76,7 +76,7 @@ const Unlock = defineComponent({
           await api.unlockNative();
           break;
         case 'Wrapped':
-          await api.unlockWrapped();
+          await api.unlockWrapped(activeKey, amount.value, config.ERC20_HASH);
           break;
       }
     }
