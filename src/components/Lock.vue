@@ -13,7 +13,7 @@
     <br>
 
     <div class="row">
-      <div class="col-md-1">
+      <div class="col-md-2">
         <button
             class="btn btn-default"
             @click="lock('Base')"
@@ -23,7 +23,7 @@
         </button>
       </div>
 
-      <div class="col-md-1">
+      <div class="col-md-2">
         <button
             class="btn btn-default"
             @click="lock('Native')"
@@ -33,7 +33,7 @@
         </button>
       </div>
 
-      <div class="col-md-1">
+      <div class="col-md-2">
         <button
             class="btn btn-default"
             @click="lock('Wrapped')"

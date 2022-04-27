@@ -42,6 +42,8 @@
       </p>
 
       <Lock :erc20TokenHash="erc20TokenHash" />
+      
+      <Unlock :erc20TokenHash="erc20TokenHash" />
 
       <Sender/>
 
@@ -73,6 +75,7 @@ import TransferERC20ToContract from "./components/TransferERC20ToContract.vue";
 import Approve from "./components/Approve.vue";
 import TransferERC20From from "./components/TransferERC20From.vue";
 import Lock from "./components/Lock.vue";
+import Unlock from "./components/Unlock.vue";
 import PubKeyToHash from "./components/PubKeyToHash.vue";
 import {NODE_ADDRESS} from "@/constants";
 import {
@@ -101,6 +104,7 @@ const App = defineComponent({
     TransferERC20From,
     PubKeyToHash,
     Lock,
+    Unlock,
   },
   setup() {
     const signer = useSignerStore();
