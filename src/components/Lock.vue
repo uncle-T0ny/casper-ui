@@ -13,17 +13,7 @@
     <br>
 
     <div class="row">
-      <div class="col-md-2">
-        <button
-            class="btn btn-default"
-            @click="lock('Base')"
-            type="button"
-        >
-          Lock BASE
-        </button>
-      </div>
-
-      <div class="col-md-2">
+      <div class="col-md-1">
         <button
             class="btn btn-default"
             @click="lock('Native')"
@@ -33,7 +23,7 @@
         </button>
       </div>
 
-      <div class="col-md-2">
+      <div class="col-md-1">
         <button
             class="btn btn-default"
             @click="lock('Wrapped')"
@@ -62,16 +52,13 @@ const Lock = defineComponent({
     erc20TokenHash: String,
   },
   name: 'Lock',
-  setup(props) {
+  setup() {
     const amount = ref('0');
 
     async function lock(type: string) {
       const activeKey = await window.casperlabsHelper.getActivePublicKey();
 
       switch (type) {
-        case 'Base':
-          await api.lockBase(activeKey, amount.value, config.BRIDGE_HASH, config.WCSPR_HASH);
-          break;
         case 'Native':
           await api.lockNative(activeKey, amount.value, config.BRIDGE_HASH, config.ERC20_HASH);
           break;
@@ -83,7 +70,7 @@ const Lock = defineComponent({
 
     return {
       amount,
-      unlock: lock,
+      lock,
     }
   }
 })
