@@ -129,7 +129,7 @@ export class CasperAPI {
     const byteArray = new CLByteArray(
       Uint8Array.from(Buffer.from(contractHash, "hex"))
     );
-    const key = this.createRecipientAddress(byteArray);
+    const key = CasperAPI.createRecipientAddress(byteArray);
     const keyBytes = CLValueParsers.toBytes(key).unwrap();
     const itemKeyContract = Buffer.from(keyBytes).toString("base64");
 
@@ -143,7 +143,7 @@ export class CasperAPI {
   }
 
   async balanceOf(account: RecipientType, seedUref: string) {
-    const key = this.createRecipientAddress(account);
+    const key = CasperAPI.createRecipientAddress(account);
     const keyBytes = CLValueParsers.toBytes(key).unwrap();
     const itemKey = Buffer.from(keyBytes).toString("base64");
 
@@ -196,16 +196,20 @@ export class CasperAPI {
     spender: string
   ): Promise<string> {
     console.log(`parse owner ${owner}`);
-    const keyOwner = this.createRecipientAddress(CLPublicKey.fromHex(owner));
+    const keyOwner = CasperAPI.createRecipientAddress(
+      CLPublicKey.fromHex(owner)
+    );
     console.log(`parse spender ${spender}`);
     let keySpender;
     try {
       // for public key
-      keySpender = this.createRecipientAddress(CLPublicKey.fromHex(spender));
+      keySpender = CasperAPI.createRecipientAddress(
+        CLPublicKey.fromHex(spender)
+      );
     } catch (err) {
       // for contract hash
       console.log("init spender by contract hash");
-      keySpender = this.createRecipientAddress(
+      keySpender = CasperAPI.createRecipientAddress(
         new CLByteArray(Uint8Array.from(Buffer.from(spender, "hex")))
       );
     }
@@ -388,7 +392,7 @@ export class CasperAPI {
         token: CLValueBuilder.key(
           new CLByteArray(Uint8Array.from(Buffer.from(tokenHash, "hex")))
         ),
-        contract_hash: this.createRecipientAddress(
+        contract_hash: CasperAPI.createRecipientAddress(
           new CLByteArray(
             Uint8Array.from(
               Buffer.from(
@@ -429,8 +433,12 @@ export class CasperAPI {
       Uint8Array.from(Buffer.from(tokenHash, "hex")),
       "transfer_from",
       RuntimeArgs.fromMap({
-        owner: this.createRecipientAddress(CLPublicKey.fromHex(ownerPubKey)),
-        recipient: this.createRecipientAddress(CLPublicKey.fromHex(activeKey)),
+        owner: CasperAPI.createRecipientAddress(
+          CLPublicKey.fromHex(ownerPubKey)
+        ),
+        recipient: CasperAPI.createRecipientAddress(
+          CLPublicKey.fromHex(activeKey)
+        ),
         amount: new CLU256(amount),
       })
     );
@@ -453,7 +461,7 @@ export class CasperAPI {
     spender: string,
     approveAmount: string
   ) {
-    const keySpender = this.createRecipientAddress(
+    const keySpender = CasperAPI.createRecipientAddress(
       CLPublicKey.fromHex(spender)
     );
 
@@ -491,11 +499,13 @@ export class CasperAPI {
     let keySpender;
     try {
       // for public key
-      keySpender = this.createRecipientAddress(CLPublicKey.fromHex(spender));
+      keySpender = CasperAPI.createRecipientAddress(
+        CLPublicKey.fromHex(spender)
+      );
     } catch (err) {
       // for contract hash
       console.log("init spender by contract hash");
-      keySpender = this.createRecipientAddress(
+      keySpender = CasperAPI.createRecipientAddress(
         new CLByteArray(Uint8Array.from(Buffer.from(spender, "hex")))
       );
     }
@@ -529,7 +539,7 @@ export class CasperAPI {
     return myString.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
   }
 
-  private createRecipientAddress(recipient: RecipientType): CLKey {
+  public static createRecipientAddress(recipient: RecipientType): CLKey {
     console.log("recipient.clType()", recipient.clType().toString());
 
     try {

@@ -13,7 +13,7 @@
     <br>
 
     <div class="row">
-      <div class="col-md-1">
+      <div class="col-md-2">
         <button
             class="btn btn-default"
             @click="unlock('Base')"
@@ -23,7 +23,7 @@
         </button>
       </div>
 
-      <div class="col-md-1">
+      <div class="col-md-2">
         <button
             class="btn btn-default"
             @click="unlock('Native')"
@@ -33,7 +33,7 @@
         </button>
       </div>
 
-      <div class="col-md-1">
+      <div class="col-md-2">
         <button
             class="btn btn-default"
             @click="unlock('Wrapped')"
@@ -76,7 +76,7 @@ const Unlock = defineComponent({
           await api.unlockNative();
           break;
         case 'Wrapped':
-          await api.unlockWrapped();
+          await api.unlockWrapped(activeKey, amount.value, config.ERC20_HASH);
           break;
       }
     }
