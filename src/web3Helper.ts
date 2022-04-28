@@ -1,7 +1,8 @@
 import Web3 from "web3";
-import type { UnlockArgsToSign } from "./interfaces";
 import BN from "bn.js";
 import { randomBytes } from "crypto";
+
+import type { UnlockArgsToSign } from "./interfaces";
 
 export const DEFAULT_CONTRACT_VERSION = 1;
 
@@ -38,7 +39,7 @@ function getParamsToEncode(web3: Web3, messageToSign: UnlockArgsToSign) {
     { t: "bytes4", v: web3.utils.asciiToHex(messageToSign.lock_source) },
     { t: "bytes4", v: web3.utils.asciiToHex(messageToSign.token_source) },
     { t: "bytes32", v: messageToSign.token_source_address },
-    { t: "bytes4", v: web3.utils.asciiToHex("NEAR") },
+    { t: "bytes4", v: web3.utils.asciiToHex("CSPR") },
     { t: "string", v: "unlock" },
   ];
 }
@@ -53,7 +54,7 @@ export async function signMessage(
   const sig = await getSignature(web3, validatorPK, dataHash!);
 
   console.log("signature:", sig);
-  return Buffer.from(sig.replace("0x", ""), "hex").toString("base64");
+  return Buffer.from(sig.replace("0x", ""), "hex").toString("hex");
 }
 
 export function getAddressFromPK(pk: string): string {

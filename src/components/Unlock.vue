@@ -65,7 +65,7 @@ const Unlock = defineComponent({
   setup(props) {
     const amount = ref('0');
 
-    async function lock(type: string) {
+    async function unlock(type: string) {
       const activeKey = await window.casperlabsHelper.getActivePublicKey();
 
       switch (type) {
@@ -76,14 +76,14 @@ const Unlock = defineComponent({
           await api.unlockNative();
           break;
         case 'Wrapped':
-          await api.unlockWrapped(activeKey, amount.value, config.ERC20_HASH);
+          await api.unlockWrapped(activeKey, amount.value, config.BRIDGE_HASH);
           break;
       }
     }
 
     return {
       amount,
-      unlock: lock,
+      unlock,
     }
   }
 })

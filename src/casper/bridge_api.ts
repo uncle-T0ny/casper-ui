@@ -16,8 +16,13 @@ import {
   CLValueBuilder,
   CLU128,
   CLString,
+  CLOption,
+  CLType,
+  CLURefType,
 } from "casper-js-sdk";
 import * as blake from "blakejs";
+
+import { None } from "ts-results";
 
 import { utils } from "casper-js-client-helper";
 import { concat } from "@ethersproject/bytes";
@@ -170,31 +175,34 @@ export class BridgeAPI {
   async unlockBase() {}
   async unlockNative() {}
 
-  async unlockWrapped(activeKey: string, amount: string, receiverHash: string) {
-    const unlockArgs: UnlockArgsToSign = {
-      lock_id: this.generateLockId(),
-      amount: amount,
-      recipient: activeKey,
-      lock_source: "CSPR",
-      token_source: "CAD",
-      token_source_address: "0xffa3a3eFc1229116c9F1DEC71B788e6F89338C7c",
-    };
-
-    const signature = new CLString(await signMessage(PK, unlockArgs));
+  async unlockWrapped(
+    activeKey: string,
+    amount: string,
+    receiverHash: string
+    // tokenAddress: string
+  ) {
+    // amount = 2
+    const signature = new CLString(
+      "3df0920b56a272341ff3239322162a9966bcd6fed514ceab9e4a575dcfaa26ed150aa86fe6620fd0b787cb06370b9da7df66a43f4d0e98852a4d75c9a8f398a21c"
+    );
 
     let recipient = CasperAPI.createRecipientAddress(
       CLPublicKey.fromHex(activeKey)
     );
 
     const args = RuntimeArgs.fromMap({
-      lock_id: new CLU128(unlockArgs.lock_id),
-      amount: new CLU256(unlockArgs.amount),
-      lock_source: new CLString(unlockArgs.lock_source),
-      token_source: new CLString(unlockArgs.token_source),
-      token_source_address: new CLString(unlockArgs.token_source_address),
+      lock_id: new CLU128("1439534115550340545136032164909163587"),
+      amount: new CLU256(amount),
+      lock_source: new CLString("CAD"),
+      token_source: new CLString("CAD"),
+      token_source_address: new CLString(
+        "0xffa3a3eFc1229116c9F1DEC71B788e6F89338C7c"
+      ),
       recipient,
       signature,
     });
+
+    const fee = 1_000_000_000;
 
     const deployParams = new DeployParameters(
       activeKey,
@@ -202,7 +210,7 @@ export class BridgeAPI {
       receiverHash,
       "unlock",
       args,
-      "300000000"
+      "5000000000"
     );
     const deploy = deployParams.makeDeploy;
 
