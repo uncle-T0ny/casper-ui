@@ -63,7 +63,7 @@ const Lock = defineComponent({
           await api.lockNative(activeKey, amount.value, config.BRIDGE_HASH, config.ERC20_HASH);
           break;
         case 'Wrapped':
-          await api.lockWrapped(activeKey, amount.value, config.BRIDGE_HASH, config.ERC20_HASH);
+          await api.lockWrapped(activeKey, amount.value, config.BRIDGE_HASH, config.ERC20_WRAPPED_HASH);
           break;
       }
     }

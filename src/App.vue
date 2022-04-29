@@ -49,7 +49,7 @@
 
       <AllowanceGetter :erc20TokenHash="erc20TokenHash"/>
 
-      <ERC20BalanceGetter :erc20TokenHash="erc20TokenHash"/>
+      <ERC20BalanceGetter />
 
       <Approve :erc20TokenHash="erc20TokenHash"/>
 

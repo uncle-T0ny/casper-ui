@@ -109,7 +109,7 @@ export class BridgeAPI {
       lock_id: new CLU128(this.generateLockId()),
       amount: new CLU256(amount),
       token_address: new CLString(tokenAddress),
-      recipient: new CLString("0x3f23E1554afe9e3c30DCB692A274d95307361326"),
+      recipient: new CLString("0xa11bd36801d8fa4448f0ac4ea7a62e3634ce8c7c"),
       destination: new CLString("ETH"),
     });
 

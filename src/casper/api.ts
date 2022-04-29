@@ -515,6 +515,7 @@ export class CasperAPI {
       amount: CLValueBuilder.u256(approveAmount),
     });
 
+    console.log('erc20ContractHash', erc20ContractHash);
     const deployParams = new DeployParameters(
       activeKey,
       "casper-test",

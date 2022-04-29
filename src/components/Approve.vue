@@ -25,6 +25,7 @@
 import {defineComponent, ref} from "vue";
 import {CasperAPI} from "@/casper/api";
 import {NODE_ADDRESS} from "@/constants";
+import {config} from "@/config";
 
 const api = new CasperAPI(NODE_ADDRESS);
 
@@ -33,22 +34,14 @@ const Approve = defineComponent({
     erc20TokenHash: String,
   },
   name: 'Approve',
-  setup(props) {
+  setup() {
     const spenderHash = ref('');
     const allowance = ref('0');
 
     async function approve() {
-      if (!props.erc20TokenHash) {
-        return;
-      }
-      console.log(`
-      approve:
-      erc20 token contractHash: ${props.erc20TokenHash}
-      spenderHash: ${spenderHash.value}
-      `);
       const activeKey = await window.casperlabsHelper.getActivePublicKey();
 
-      await api.approve(props.erc20TokenHash, activeKey, spenderHash.value, '10000');
+      await api.approve(config.ERC20_HASH, activeKey, spenderHash.value, '10000');
     }
 
     return {
