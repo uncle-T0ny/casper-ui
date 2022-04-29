@@ -13,7 +13,7 @@
     "bn.js": "^5.2.0",
     "buffer": "^6.0.3",
     "casper-js-client-helper": "^1.0.0",
-    "casper-js-sdk": "^2.8.0",
+    "casper-js-sdk": "^2.9.1",
     "pinia": "^2.0.11",
     "vue": "^3.2.29",
     "web3": "^1.7.3"

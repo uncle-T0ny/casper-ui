@@ -100,7 +100,8 @@ class API {
     const storedValue = await client.getDictionaryItemByURef(
       await this.getStateRootHash(),
       lockId,
-      locksURef
+      locksURef,
+      { rawData : true }
     );
 
     console.log('lock result:', storedValue)
