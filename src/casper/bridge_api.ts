@@ -183,7 +183,7 @@ export class BridgeAPI {
   ) {
     // amount = 2
     const signature = new CLString(
-      "3df0920b56a272341ff3239322162a9966bcd6fed514ceab9e4a575dcfaa26ed150aa86fe6620fd0b787cb06370b9da7df66a43f4d0e98852a4d75c9a8f398a21c"
+      "f9a4177980b72f4d471718a692fec147b23ef6e5d1b29e5c5eabfd8ff8f0ac180cbf76d0b565cf081b3550ab1e4a256f8c61a556d642935bfbeccb858a04c7b01c"
     );
 
     let recipient = CasperAPI.createRecipientAddress(
@@ -193,10 +193,10 @@ export class BridgeAPI {
     const args = RuntimeArgs.fromMap({
       lock_id: new CLU128("1439534115550340545136032164909163587"),
       amount: new CLU256(amount),
-      lock_source: new CLString("CAD"),
-      token_source: new CLString("CAD"),
+      lock_source: new CLString("KVN"),
+      token_source: new CLString("KVN"),
       token_source_address: new CLString(
-        "0xffa3a3eFc1229116c9F1DEC71B788e6F89338C7c"
+        "0xd0a1e359811322d97991e03f863a0c30c2cf029c"
       ),
       recipient,
       signature,
