@@ -104,7 +104,10 @@ class API {
       { rawData : true }
     );
 
-    console.log('lock result:', storedValue)
+    // @ts-ignore
+    console.log('storedValue.bytes', storedValue.CLValue.bytes);
+    // @ts-ignore
+    console.log('lock result:', Buffer.from(storedValue.CLValue.bytes, 'hex').toString('utf-8'))
   }
 }
 
